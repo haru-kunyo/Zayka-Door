@@ -254,7 +254,7 @@
             <div class="progress-fill"></div>
         </div>
         
-        <form id="addressDetailsForm" action="addressDetails" method="post">
+        <form id="addressDetailsForm" action="/register/addressDetails" method="post">
             <div class="form-group">
                 <label for="addLine">Address Line <span class="required">*</span></label>
                 <textarea id="addLine" name="addLine" placeholder="Enter your complete address (Building name, Street, Area)" required></textarea>

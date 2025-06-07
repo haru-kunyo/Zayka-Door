@@ -180,4 +180,10 @@ public class ResturantController {
 	    rr.save(existing);
 	    return "redirect:/restaurant/dashboard";
 	}
+	
+	@GetMapping("/restaurant/dashboard")
+	public String dash(HttpSession session, ModelMap model) {
+		
+		return "ResturantDashboard";
+	}
 }

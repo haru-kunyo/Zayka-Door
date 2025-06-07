@@ -954,6 +954,41 @@
                 closeMenuItemModal();
             }
         });
+        
+        document.getElementById('editInfoBtn').addEventListener('click', function() {
+            // Enable all input fields
+            const inputs = document.querySelectorAll('#resName, #ownername, #fssaiNo, #addLine, #city, #state, #pincode, #profileImageUrl, #openingTime, #closingTime');
+            inputs.forEach(input => input.disabled = false);
+            
+            // Show/hide buttons
+            document.getElementById('editInfoBtn').style.display = 'none';
+            document.getElementById('saveInfoBtn').style.display = 'inline-block';
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+        });
+
+        document.getElementById('saveInfoBtn').addEventListener('click', function() {
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/restaurant/dashboard';
+            
+            // Add all input values as hidden fields
+            const inputs = document.querySelectorAll('#resName, #ownername, #fssaiNo, #addLine, #city, #state, #pincode, #profileImageUrl, #openingTime, #closingTime');
+            inputs.forEach(input => {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = input.id;
+                hiddenInput.value = input.value;
+                form.appendChild(hiddenInput);
+            });
+            
+            document.body.appendChild(form);
+            form.submit();
+        });
+
+        document.getElementById('cancelEditBtn').addEventListener('click', function() {
+            location.reload(); // Reload page to cancel changes
+        });
     </script>
 </body>
 </html>

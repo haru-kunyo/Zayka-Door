@@ -229,7 +229,7 @@
             <div class="progress-fill"></div>
         </div>
         
-        <form id="restaurantDetailsForm" action="restaurantDetails" method="post">
+        <form id="restaurantDetailsForm" action="/register/resDetails" method="post">
             <div class="form-group">
                 <label for="resName">Restaurant Name <span class="required">*</span></label>
                 <input type="text" id="resName" name="resName" placeholder="Enter your restaurant name" required>
