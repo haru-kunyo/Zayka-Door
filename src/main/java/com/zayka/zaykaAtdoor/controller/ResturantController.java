@@ -1,11 +1,15 @@
 package com.zayka.zaykaAtdoor.controller;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -157,7 +161,7 @@ public class ResturantController {
 
 	@PostMapping("/register/addressDetails")
 	public String saveAddressDetails(HttpSession session, ModelMap model,
-	                               @RequestParam String address,
+	                               @RequestParam String addLine,
 	                               @RequestParam String city,
 	                               @RequestParam String state,
 	                               @RequestParam String pincode) {
@@ -173,17 +177,87 @@ public class ResturantController {
 	    if (existing == null) {
 	        return "redirect:/register";
 	    }
-	    existing.setAddLine(address);
+	    existing.setAddLine(addLine);
 	    existing.setCity(city);
 	    existing.setState(state);
 	    existing.setPincode(pincode);
 	    rr.save(existing);
-	    return "redirect:/restaurant/dashboard";
+	    return "redirect:/resturant/dashboard/" + phone;
 	}
 	
-	@GetMapping("/restaurant/dashboard")
-	public String dash(HttpSession session, ModelMap model) {
-		
+	@GetMapping("/resturant/dashboard/{phoneNumber}")
+	public String dash(@PathVariable String phoneNumber, HttpSession session, ModelMap model) {
+		Resturant resturant = rr.findByPhoneNumber(phoneNumber);
+		if (resturant == null) {
+            return "/";
+        }
+		session.setAttribute("verifiedPhone", phoneNumber);
+		model.addAttribute("resName", resturant.getResName());
+		model.addAttribute("ownername", resturant.getOwnername());
+		model.addAttribute("phoneNumber", resturant.getPhoneNumber());
+		model.addAttribute("fssaiNo", resturant.getFSSAI_NO());
+		model.addAttribute("addLine", resturant.getAddLine());
+		model.addAttribute("city", resturant.getCity());
+		model.addAttribute("state", resturant.getState());
+		model.addAttribute("pincode", resturant.getPincode());
+		model.addAttribute("profileImageUrl", resturant.getProfileImageUrl());
+		model.addAttribute("openingTime", resturant.getOpeningTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+		model.addAttribute("closingTime", resturant.getClosingTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+		model.addAttribute("resturant", resturant);
 		return "ResturantDashboard";
+	}
+	
+	@PostMapping("/resturant/dashboard/{phoneNumber}")
+	public String dash(@PathVariable String phoneNumber,
+            @RequestParam String resName,
+            @RequestParam String ownername,
+            @RequestParam String fssaiNo,
+            @RequestParam String addLine,
+            @RequestParam String city,
+            @RequestParam String state,
+            @RequestParam String pincode,
+            @RequestParam(required = false) String profileImageUrl,
+            @RequestParam(required = false) String openingTime,
+            @RequestParam(required = false) String closingTime,
+            HttpSession session,
+            ModelMap model) {
+		Resturant resturant = rr.findByPhoneNumber(phoneNumber);
+		if (resturant == null) {
+            return "redirect:/register";
+        }
+		resturant.setResName(resName);
+        resturant.setOwnername(ownername);
+        resturant.setFSSAI_NO(fssaiNo);
+        resturant.setAddLine(addLine);
+        resturant.setCity(city);
+        resturant.setState(state);
+        resturant.setPincode(pincode);
+        if (profileImageUrl != null && !profileImageUrl.trim().isEmpty()) {
+            resturant.setProfileImageUrl(profileImageUrl);
+        }
+        
+        if (openingTime != null && !openingTime.trim().isEmpty()) {
+            try {
+                LocalTime parsedOpeningTime = LocalTime.parse(openingTime, DateTimeFormatter.ofPattern("HH:mm"));
+                resturant.setOpeningTime(parsedOpeningTime);
+            } catch (DateTimeParseException e) {
+                model.addAttribute("errorMessage", "Invalid opening time format. Please use HH:mm format.");
+                return "redirect:/restaurant/dashboard/" + phoneNumber + "?error=invalidOpeningTime";
+            }
+        }
+        
+        if (closingTime != null && !closingTime.trim().isEmpty()) {
+            try {
+                LocalTime parsedClosingTime = LocalTime.parse(closingTime, DateTimeFormatter.ofPattern("HH:mm"));
+                resturant.setClosingTime(parsedClosingTime);
+            } catch (DateTimeParseException e) {
+                model.addAttribute("errorMessage", "Invalid closing time format. Please use HH:mm format.");
+                return "redirect:/restaurant/dashboard/" + phoneNumber + "?error=invalidClosingTime";
+            }
+        }
+        rr.save(resturant);
+        model.addAttribute("successMessage", "Restaurant information updated successfully!");
+        return "redirect:/resturant/dashboard/" + phoneNumber + "?success=true";
+        
 	}
 }

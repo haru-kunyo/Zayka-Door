@@ -35,8 +35,8 @@ public class Resturant {
 	
 	//operational details
 	private Boolean isOpen;
-	private LocalTime openingTime;
-    private LocalTime closingTime; 
+	private LocalTime openingTime = LocalTime.of(9, 0);
+    private LocalTime closingTime = LocalTime.of(22, 0); 
     
     //images
     private String profileImageUrl;

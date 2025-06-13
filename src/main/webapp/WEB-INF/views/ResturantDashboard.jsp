@@ -806,189 +806,262 @@
     </div>
 
     <script>
-        // Restaurant status toggle with slider
-        let isOpen = true;
-        
-        document.getElementById('statusToggle').addEventListener('click', function() {
-            const statusBadge = document.getElementById('statusBadge');
-            const toggleSwitch = document.getElementById('statusToggle');
-            
-            if (isOpen) {
-                statusBadge.textContent = 'Closed';
-                statusBadge.className = 'status-badge status-closed';
-                toggleSwitch.classList.remove('active');
-                isOpen = false;
-            } else {
-                statusBadge.textContent = 'Open';
-                statusBadge.className = 'status-badge status-open';
-                toggleSwitch.classList.add('active');
-                isOpen = true;
-            }
-        });
-
-        // Restaurant info editing
-        let isEditing = false;
-        let originalValues = {};
-
-        document.getElementById('editInfoBtn').addEventListener('click', function() {
-            const inputs = ['resName', 'ownername', 'phoneNumber', 'fssaiNo', 'openingTime', 'closingTime', 'profileImageUrl', 'addLine', 'city', 'state', 'pincode'];
-            
-            // Store original values
-            inputs.forEach(id => {
-                originalValues[id] = document.getElementById(id).value;
-                document.getElementById(id).disabled = false;
-            });
-            
-            document.getElementById('editInfoBtn').style.display = 'none';
-            document.getElementById('saveInfoBtn').style.display = 'inline-block';
-            document.getElementById('cancelEditBtn').style.display = 'inline-block';
-            isEditing = true;
-        });
-
-        document.getElementById('saveInfoBtn').addEventListener('click', function() {
-            // Here you would normally send the data to the server
-            alert('Restaurant information updated successfully!');
-            finishEditing();
-        });
-
-        document.getElementById('cancelEditBtn').addEventListener('click', function() {
-            const inputs = ['resName', 'ownername', 'phoneNumber', 'fssaiNo', 'openingTime', 'closingTime', 'profileImageUrl', 'addLine', 'city', 'state', 'pincode'];
-            
-            // Restore original values
-            inputs.forEach(id => {
-                document.getElementById(id).value = originalValues[id];
-            });
-            
-            finishEditing();
-        });
-
-        function finishEditing() {
-            const inputs = ['resName', 'ownername', 'phoneNumber', 'fssaiNo', 'openingTime', 'closingTime', 'profileImageUrl', 'addLine', 'city', 'state', 'pincode'];
-            
-            inputs.forEach(id => {
-                document.getElementById(id).disabled = true;
-            });
-            
-            document.getElementById('editInfoBtn').style.display = 'inline-block';
-            document.getElementById('saveInfoBtn').style.display = 'none';
-            document.getElementById('cancelEditBtn').style.display = 'none';
-            isEditing = false;
-        }
-
-        // Menu item management
-        let nextMenuItemId = 4; // For generating new IDs in demo
-
-        function openAddItemModal() {
-            document.getElementById('modalTitle').textContent = 'Add New Menu Item';
-            document.getElementById('menuItemForm').reset();
-            document.getElementById('itemId').value = nextMenuItemId;
-            document.getElementById('menuItemModal').style.display = 'block';
-        }
-
-        function closeMenuItemModal() {
-            document.getElementById('menuItemModal').style.display = 'none';
-        }
-
-        function editMenuItem(id) {
-            // In a real application, you would fetch the item data from the server
-            document.getElementById('modalTitle').textContent = 'Edit Menu Item';
-            document.getElementById('menuItemModal').style.display = 'block';
-            
-            // Mock data population for demonstration
-            if (id === 1) {
-                document.getElementById('itemId').value = '1';
-                document.getElementById('itemName').value = 'Margherita Pizza';
-                document.getElementById('itemDesc').value = 'Fresh tomatoes, mozzarella, basil';
-                document.getElementById('itemPrice').value = '12';
-                document.getElementById('itemImgURL').value = 'https://example.com/margherita.jpg';
-            } else if (id === 2) {
-                document.getElementById('itemId').value = '2';
-                document.getElementById('itemName').value = 'Caesar Salad';
-                document.getElementById('itemDesc').value = 'Crisp romaine lettuce with Caesar dressing';
-                document.getElementById('itemPrice').value = '8';
-                document.getElementById('itemImgURL').value = 'https://example.com/caesar.jpg';
-            } else if (id === 3) {
-                document.getElementById('itemId').value = '3';
-                document.getElementById('itemName').value = 'Chicken Alfredo';
-                document.getElementById('itemDesc').value = 'Creamy pasta with grilled chicken';
-                document.getElementById('itemPrice').value = '15';
-                document.getElementById('itemImgURL').value = 'https://example.com/alfredo.jpg';
-            }
-        }
-
-        function deleteMenuItem(id) {
-            if (confirm('Are you sure you want to delete this menu item?')) {
-                alert('Menu item deleted successfully!');
-                // Here you would normally send a delete request to the server
-            }
-        }
-
-        document.getElementById('menuItemForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const isEditing = document.getElementById('modalTitle').textContent === 'Edit Menu Item';
-            
-            if (isEditing) {
-                alert('Menu item updated successfully!');
-            } else {
-                alert('Menu item added successfully!');
-                nextMenuItemId++; // Increment for next new item
-            }
-            
-            closeMenuItemModal();
-        });
-
-        // Order status update
-        function updateOrderStatus(orderId, newStatus) {
-            const statusElement = document.querySelector(`tr:has(td:first-child:contains('#${orderId}')) .order-status`);
-            if (statusElement) {
-                statusElement.className = `order-status status-${newStatus}`;
-                statusElement.textContent = newStatus.replace('-', ' ');
-            }
-            alert(`Order #${orderId} status updated to: ${newStatus.replace('-', ' ')}`);
-        }
-
-        // Close modal when clicking outside of it
-        window.addEventListener('click', function(event) {
-            const modal = document.getElementById('menuItemModal');
-            if (event.target === modal) {
-                closeMenuItemModal();
-            }
-        });
-        
-        document.getElementById('editInfoBtn').addEventListener('click', function() {
-            // Enable all input fields
-            const inputs = document.querySelectorAll('#resName, #ownername, #fssaiNo, #addLine, #city, #state, #pincode, #profileImageUrl, #openingTime, #closingTime');
-            inputs.forEach(input => input.disabled = false);
-            
-            // Show/hide buttons
-            document.getElementById('editInfoBtn').style.display = 'none';
-            document.getElementById('saveInfoBtn').style.display = 'inline-block';
-            document.getElementById('cancelEditBtn').style.display = 'inline-block';
-        });
-
-        document.getElementById('saveInfoBtn').addEventListener('click', function() {
-            // Create form and submit
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/restaurant/dashboard';
-            
-            // Add all input values as hidden fields
-            const inputs = document.querySelectorAll('#resName, #ownername, #fssaiNo, #addLine, #city, #state, #pincode, #profileImageUrl, #openingTime, #closingTime');
-            inputs.forEach(input => {
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = input.id;
-                hiddenInput.value = input.value;
-                form.appendChild(hiddenInput);
-            });
-            
-            document.body.appendChild(form);
-            form.submit();
-        });
-
-        document.getElementById('cancelEditBtn').addEventListener('click', function() {
-            location.reload(); // Reload page to cancel changes
-        });
+	 // Fixed JavaScript for Restaurant Dashboard Edit Functionality
+	
+	 // Get phone number from model attribute
+	 const phoneNumber = '<%= request.getAttribute("phoneNumber") %>';
+	
+	 // Restaurant status toggle with slider
+	 let isOpen = true;
+	
+	 document.getElementById('statusToggle').addEventListener('click', function() {
+	     const statusBadge = document.getElementById('statusBadge');
+	     const toggleSwitch = document.getElementById('statusToggle');
+	     
+	     if (isOpen) {
+	         statusBadge.textContent = 'Closed';
+	         statusBadge.className = 'status-badge status-closed';
+	         toggleSwitch.classList.remove('active');
+	         isOpen = false;
+	     } else {
+	         statusBadge.textContent = 'Open';
+	         statusBadge.className = 'status-badge status-open';
+	         toggleSwitch.classList.add('active');
+	         isOpen = true;
+	     }
+	 });
+	
+	 // Restaurant info editing
+	 let isEditing = false;
+	 let originalValues = {};
+	
+	 document.getElementById('editInfoBtn').addEventListener('click', function() {
+	     const inputs = ['resName', 'ownername', 'phoneNumber', 'fssaiNo', 'openingTime', 'closingTime', 'profileImageUrl', 'addLine', 'city', 'state', 'pincode'];
+	     
+	     // Store original values
+	     inputs.forEach(id => {
+	         const element = document.getElementById(id);
+	         if (element) {
+	             originalValues[id] = element.value;
+	             element.disabled = false;
+	             element.style.backgroundColor = '#fff'; // Make it clear it's editable
+	         }
+	     });
+	     
+	     document.getElementById('editInfoBtn').style.display = 'none';
+	     document.getElementById('saveInfoBtn').style.display = 'inline-block';
+	     document.getElementById('cancelEditBtn').style.display = 'inline-block';
+	     isEditing = true;
+	 });
+	
+	 document.getElementById('saveInfoBtn').addEventListener('click', function() {
+	     // Validate required fields
+	     const requiredFields = ['resName', 'ownername', 'fssaiNo', 'addLine', 'city', 'state', 'pincode'];
+	     let isValid = true;
+	     
+	     requiredFields.forEach(fieldId => {
+	         const element = document.getElementById(fieldId);
+	         if (element && !element.value.trim()) {
+	             element.style.borderColor = '#dc3545';
+	             isValid = false;
+	         } else if (element) {
+	             element.style.borderColor = '';
+	         }
+	     });
+	     
+	     if (!isValid) {
+	         alert('Please fill in all required fields.');
+	         return;
+	     }
+	     
+	     // Validate time format
+	     const openingTime = document.getElementById('openingTime').value;
+	     const closingTime = document.getElementById('closingTime').value;
+	     
+	     if (openingTime && !openingTime.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)) {
+	         alert('Invalid opening time format. Please use HH:MM format.');
+	         return;
+	     }
+	     
+	     if (closingTime && !closingTime.match(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)) {
+	         alert('Invalid closing time format. Please use HH:MM format.');
+	         return;
+	     }
+	     
+	     // Create form and submit
+	     const form = document.createElement('form');
+	     form.method = 'POST';
+	     form.action = window.location.pathname; // Use current path
+	     
+	     // Add all input values as hidden fields
+	     const inputIds = ['resName', 'ownername', 'fssaiNo', 'addLine', 'city', 'state', 'pincode', 'profileImageUrl', 'openingTime', 'closingTime'];
+	     inputIds.forEach(inputId => {
+	         const input = document.getElementById(inputId);
+	         if (input) {
+	             const hiddenInput = document.createElement('input');
+	             hiddenInput.type = 'hidden';
+	             hiddenInput.name = inputId;
+	             hiddenInput.value = input.value.trim();
+	             form.appendChild(hiddenInput);
+	         }
+	     });
+	     
+	     // Add phone number as hidden field
+	     const phoneInput = document.createElement('input');
+	     phoneInput.type = 'hidden';
+	     phoneInput.name = 'phoneNumber';
+	     phoneInput.value = phoneNumber;
+	     form.appendChild(phoneInput);
+	     
+	     document.body.appendChild(form);
+	     form.submit();
+	 });
+	
+	 document.getElementById('cancelEditBtn').addEventListener('click', function() {
+	     const inputs = ['resName', 'ownername', 'phoneNumber', 'fssaiNo', 'openingTime', 'closingTime', 'profileImageUrl', 'addLine', 'city', 'state', 'pincode'];
+	     
+	     // Restore original values
+	     inputs.forEach(id => {
+	         const element = document.getElementById(id);
+	         if (element && originalValues[id] !== undefined) {
+	             element.value = originalValues[id];
+	             element.style.borderColor = '';
+	         }
+	     });
+	     
+	     finishEditing();
+	 });
+	
+	 function finishEditing() {
+	     const inputs = ['resName', 'ownername', 'phoneNumber', 'fssaiNo', 'openingTime', 'closingTime', 'profileImageUrl', 'addLine', 'city', 'state', 'pincode'];
+	     
+	     inputs.forEach(id => {
+	         const element = document.getElementById(id);
+	         if (element) {
+	             element.disabled = true;
+	             element.style.backgroundColor = '#f7f7f7'; // Disabled appearance
+	         }
+	     });
+	     
+	     document.getElementById('editInfoBtn').style.display = 'inline-block';
+	     document.getElementById('saveInfoBtn').style.display = 'none';
+	     document.getElementById('cancelEditBtn').style.display = 'none';
+	     isEditing = false;
+	 }
+	
+	 // Menu item management
+	 let nextMenuItemId = 4; // For generating new IDs in demo
+	
+	 function openAddItemModal() {
+	     document.getElementById('modalTitle').textContent = 'Add New Menu Item';
+	     document.getElementById('menuItemForm').reset();
+	     document.getElementById('itemId').value = nextMenuItemId;
+	     document.getElementById('menuItemModal').style.display = 'block';
+	 }
+	
+	 function closeMenuItemModal() {
+	     document.getElementById('menuItemModal').style.display = 'none';
+	 }
+	
+	 function editMenuItem(id) {
+	     // In a real application, you would fetch the item data from the server
+	     document.getElementById('modalTitle').textContent = 'Edit Menu Item';
+	     document.getElementById('menuItemModal').style.display = 'block';
+	     
+	     // Mock data population for demonstration
+	     if (id === 1) {
+	         document.getElementById('itemId').value = '1';
+	         document.getElementById('itemName').value = 'Margherita Pizza';
+	         document.getElementById('itemDesc').value = 'Fresh tomatoes, mozzarella, basil';
+	         document.getElementById('itemPrice').value = '12';
+	         document.getElementById('itemImgURL').value = 'https://example.com/margherita.jpg';
+	     } else if (id === 2) {
+	         document.getElementById('itemId').value = '2';
+	         document.getElementById('itemName').value = 'Caesar Salad';
+	         document.getElementById('itemDesc').value = 'Crisp romaine lettuce with Caesar dressing';
+	         document.getElementById('itemPrice').value = '8';
+	         document.getElementById('itemImgURL').value = 'https://example.com/caesar.jpg';
+	     } else if (id === 3) {
+	         document.getElementById('itemId').value = '3';
+	         document.getElementById('itemName').value = 'Chicken Alfredo';
+	         document.getElementById('itemDesc').value = 'Creamy pasta with grilled chicken';
+	         document.getElementById('itemPrice').value = '15';
+	         document.getElementById('itemImgURL').value = 'https://example.com/alfredo.jpg';
+	     }
+	 }
+	
+	 function deleteMenuItem(id) {
+	     if (confirm('Are you sure you want to delete this menu item?')) {
+	         alert('Menu item deleted successfully!');
+	         // Here you would normally send a delete request to the server
+	     }
+	 }
+	
+	 document.getElementById('menuItemForm').addEventListener('submit', function(e) {
+	     e.preventDefault();
+	     const isEditingItem = document.getElementById('modalTitle').textContent === 'Edit Menu Item';
+	     
+	     if (isEditingItem) {
+	         alert('Menu item updated successfully!');
+	     } else {
+	         alert('Menu item added successfully!');
+	         nextMenuItemId++; // Increment for next new item
+	     }
+	     
+	     closeMenuItemModal();
+	 });
+	
+	 // Order status update
+	 function updateOrderStatus(orderId, newStatus) {
+	     // Find the row containing the order ID
+	     const rows = document.querySelectorAll('tbody tr');
+	     rows.forEach(row => {
+	         const orderIdCell = row.querySelector('td:first-child');
+	         if (orderIdCell && orderIdCell.textContent === `#${orderId}`) {
+	             const statusElement = row.querySelector('.order-status');
+	             if (statusElement) {
+	                 statusElement.className = `order-status status-${newStatus}`;
+	                 statusElement.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1).replace('-', ' ');
+	             }
+	         }
+	     });
+	     alert(`Order #${orderId} status updated to: ${newStatus.replace('-', ' ')}`);
+	 }
+	
+	 // Close modal when clicking outside of it
+	 window.addEventListener('click', function(event) {
+	     const modal = document.getElementById('menuItemModal');
+	     if (event.target === modal) {
+	         closeMenuItemModal();
+	     }
+	 });
+	
+	 // Handle URL parameters for success/error messages
+	 document.addEventListener('DOMContentLoaded', function() {
+	     const urlParams = new URLSearchParams(window.location.search);
+	     
+	     if (urlParams.get('success') === 'true') {
+	         alert('Restaurant information updated successfully!');
+	         // Remove the success parameter from URL
+	         window.history.replaceState({}, document.title, window.location.pathname);
+	     }
+	     
+	     if (urlParams.get('error')) {
+	         const error = urlParams.get('error');
+	         if (error === 'invalidOpeningTime') {
+	             alert('Invalid opening time format. Please use HH:mm format.');
+	         } else if (error === 'invalidClosingTime') {
+	             alert('Invalid closing time format. Please use HH:mm format.');
+	         } else {
+	             alert('An error occurred: ' + error);
+	         }
+	         // Remove the error parameter from URL
+	         window.history.replaceState({}, document.title, window.location.pathname);
+	     }
+	     
+	     // Initialize the form state
+	     finishEditing();
+	 });
     </script>
 </body>
 </html>
